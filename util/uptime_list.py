@@ -1,7 +1,12 @@
 import requests
 
 
-def get_uptime_list():
+async def get_uptime_list():
+    """
+    It makes a request to the Civitai status page API and returns the
+    uptime list
+    :return: A list of dictionaries.
+    """
     url = "https://status.civitai.com/api/status-page/heartbeat/public"
     payload = ""
     headers = {
@@ -13,8 +18,12 @@ def get_uptime_list():
     return response.json()["uptimeList"]
 
 
-def process_uptime_list():
-    uptime_list = get_uptime_list()
+async def process_uptime_list():
+    """
+    It takes the uptime list from the API, renames the keys, and returns a dictionary with the uptime percentage
+    :return: A dictionary with the uptime of each service.
+    """
+    uptime_list = await get_uptime_list()
     renamed_dict = {
         "2_24": "Database",
         "3_24": "Model Scanner",
@@ -29,7 +38,4 @@ def process_uptime_list():
             new_key = renamed_dict[key]
             percentage = round(value * 100, 2)
             percentage_dict[new_key] = f"{percentage}%"
-    print(percentage_dict)
-
-
-process_uptime_list()
+    return percentage_dict
